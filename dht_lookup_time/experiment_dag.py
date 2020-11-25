@@ -1,6 +1,7 @@
 import random
 import time
 import sys
+import urllib
 
 import requests
 import ipfshttpclient
@@ -22,7 +23,7 @@ def run_test():
             path = ""
         path = path + cid + "/" + "/".join([char for char in '{0:05b}'.format(path_num)])
         paths = paths+path
-    print(paths)
+
     start_time = current_milli_time()
     end_time = int(requests.get(sys.argv[1] + '/get_dag_paths/' + paths).content)
     return end_time-start_time
