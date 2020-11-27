@@ -1,7 +1,8 @@
+import json
 import time
 import urllib
 
-from flask import Flask
+from flask import Flask, request
 import concurrent.futures
 import ipfshttpclient
 
@@ -17,10 +18,10 @@ def receive_hash(ipfs_hash):
     return str(current_milli_time())
 
 
-@app.route('/get_dag_paths/<path:paths>')
-def get_dag_paths(paths):
-    paths = urllib.parse.unquote(paths)
-    paths = paths.split('+')
+@app.route('/get_dag_paths', methods=['POST'])
+def get_dag_paths():
+    paths = request.get_json(force=True)
+    paths = json.load(paths)
     with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
         future_to_path = {executor.submit(ipfs.dag.resolve, path): path for path in paths}
         for future in concurrent.futures.as_completed(future_to_path):
